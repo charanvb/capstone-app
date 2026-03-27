@@ -1,7 +1,6 @@
 steps:
 
-# 🔹 1. Build Images with UNIQUE TAG ($SHORT_SHA)
-
+# 🔹 1. Build Images
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/user-service:$SHORT_SHA', './microservices/user-service']
 
@@ -18,11 +17,7 @@ steps:
   args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA', './microservices/ui-service']
 
 
-# 🔹 2. Push Images (handled automatically via images section below)
-
-
-# 🔹 3. Connect to GKE Cluster (IMPORTANT FIX)
-
+# 🔹 2. Connect to GKE
 - name: 'gcr.io/cloud-builders/gcloud'
   args:
     - container
@@ -33,22 +28,28 @@ steps:
     - europe-north1-a
 
 
-# 🔹 4. Deploy Updated Images to GKE
-
-- name: 'gcr.io/cloud-builders/kubectl'
+# 🔹 3. Replace image tags in YAML (IMPORTANT STEP)
+- name: 'gcr.io/cloud-builders/gcloud'
   entrypoint: 'bash'
   args:
     - '-c'
     - |
-      kubectl set image deployment/user-deployment user=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/user-service:$SHORT_SHA
-      kubectl set image deployment/product-deployment product=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/product-service:$SHORT_SHA
-      kubectl set image deployment/cart-deployment cart=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/cart-service:$SHORT_SHA
-      kubectl set image deployment/payment-deployment payment=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA
-      kubectl set image deployment/ui-deployment ui=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA
+      sed -i "s|user-service:.*|user-service:$SHORT_SHA|g" k8s/user.yaml
+      sed -i "s|product-service:.*|product-service:$SHORT_SHA|g" k8s/product.yaml
+      sed -i "s|cart-service:.*|cart-service:$SHORT_SHA|g" k8s/cart.yaml
+      sed -i "s|payment-service:.*|payment-service:$SHORT_SHA|g" k8s/payment.yaml
+      sed -i "s|ui-service:.*|ui-service:$SHORT_SHA|g" k8s/ui.yaml
 
 
-# 🔹 5. Push Images to Artifact Registry
+# 🔹 4. Deploy using YAML (THIS FIXES YOUR ERROR)
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+    - apply
+    - -f
+    - k8s/
 
+
+# 🔹 5. Push images
 images:
 - 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/user-service:$SHORT_SHA'
 - 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/product-service:$SHORT_SHA'
@@ -56,8 +57,6 @@ images:
 - 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA'
 - 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA'
 
-
-# 🔹 6. Logging (optional but clean)
 
 options:
   logging: CLOUD_LOGGING_ONLY
