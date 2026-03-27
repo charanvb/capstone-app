@@ -1,15 +1,40 @@
-# 🔹 Connect to GKE (ADD THIS)
+steps:
+
+# 🔹 1. Build Images with UNIQUE TAG ($SHORT_SHA)
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/user-service:$SHORT_SHA', './microservices/user-service']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/product-service:$SHORT_SHA', './microservices/product-service']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/cart-service:$SHORT_SHA', './microservices/cart-service']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA', './microservices/payment-service']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA', './microservices/ui-service']
+
+
+# 🔹 2. Push Images (handled automatically via images section below)
+
+
+# 🔹 3. Connect to GKE Cluster (IMPORTANT FIX)
+
 - name: 'gcr.io/cloud-builders/gcloud'
   args:
-  - container
-  - clusters
-  - get-credentials
-  - sahitya-cluster
-  - --zone
-  - europe-north1-a
+    - container
+    - clusters
+    - get-credentials
+    - sahitya-cluster
+    - --zone
+    - europe-north1-a
 
 
-# 🔹 Deploy
+# 🔹 4. Deploy Updated Images to GKE
+
 - name: 'gcr.io/cloud-builders/kubectl'
   entrypoint: 'bash'
   args:
@@ -20,3 +45,19 @@
       kubectl set image deployment/cart-deployment cart=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/cart-service:$SHORT_SHA
       kubectl set image deployment/payment-deployment payment=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA
       kubectl set image deployment/ui-deployment ui=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA
+
+
+# 🔹 5. Push Images to Artifact Registry
+
+images:
+- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/user-service:$SHORT_SHA'
+- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/product-service:$SHORT_SHA'
+- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/cart-service:$SHORT_SHA'
+- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA'
+- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA'
+
+
+# 🔹 6. Logging (optional but clean)
+
+options:
+  logging: CLOUD_LOGGING_ONLY
