@@ -1,23 +1,15 @@
-steps:
-
-# 🔹 Build Images
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/user-service:$SHORT_SHA', './microservices/user-service']
-
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/product-service:$SHORT_SHA', './microservices/product-service']
-
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/cart-service:$SHORT_SHA', './microservices/cart-service']
-
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA', './microservices/payment-service']
-
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA', './microservices/ui-service']
+# 🔹 Connect to GKE (ADD THIS)
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - container
+  - clusters
+  - get-credentials
+  - sahitya-cluster
+  - --zone
+  - europe-north1-a
 
 
-# 🔹 Deploy Step (must be inside steps)
+# 🔹 Deploy
 - name: 'gcr.io/cloud-builders/kubectl'
   entrypoint: 'bash'
   args:
@@ -28,20 +20,3 @@ steps:
       kubectl set image deployment/cart-deployment cart=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/cart-service:$SHORT_SHA
       kubectl set image deployment/payment-deployment payment=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA
       kubectl set image deployment/ui-deployment ui=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA
-  env:
-    - 'CLOUDSDK_COMPUTE_ZONE=europe-north1-a'
-    - 'CLOUDSDK_CONTAINER_CLUSTER=sahitya-cluster'
-
-
-# 🔹 Push Images (TOP LEVEL ONLY)
-images:
-- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/user-service:$SHORT_SHA'
-- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/product-service:$SHORT_SHA'
-- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/cart-service:$SHORT_SHA'
-- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA'
-- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA'
-
-
-# 🔹 Options (correct)
-options:
-  logging: CLOUD_LOGGING_ONLY
