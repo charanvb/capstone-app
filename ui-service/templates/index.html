@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Home - TechStore{% endblock %}
+{% block title %}Home - DigitHub{% endblock %}
 
 {% block content %}
 <div class="hero">
     <div class="hero-content">
-        <h1>Welcome to TechStore</h1>
-        <p>Your one-stop shop for amazing tech products</p>
+        <h1>Welcome to DigitHub</h1>
+        <p>Discover premium electronics & gadgets at unbeatable prices</p>
         {% if session.get('username') %}
             <a href="{{ url_for('shop') }}" class="btn btn-primary">Start Shopping</a>
         {% else %}
@@ -19,24 +19,24 @@
 <section class="features">
     <div class="features-container">
         <div class="feature-card">
-            <div class="feature-icon">📦</div>
-            <h3>Wide Selection</h3>
-            <p>Browse our collection of premium tech products</p>
+            <div class="feature-icon">⚡</div>
+            <h3>Curated Selection</h3>
+            <p>Handpicked premium electronics & gadgets</p>
         </div>
         <div class="feature-card">
-            <div class="feature-icon">🚚</div>
-            <h3>Fast Shipping</h3>
-            <p>Quick and reliable delivery to your doorstep</p>
+            <div class="feature-icon">�</div>
+            <h3>Express Delivery</h3>
+            <p>Same-day delivery available in select cities</p>
         </div>
         <div class="feature-card">
-            <div class="feature-icon">💳</div>
-            <h3>Secure Checkout</h3>
-            <p>Safe and secure payment processing</p>
+            <div class="feature-icon">�</div>
+            <h3>Secure Payments</h3>
+            <p>Multiple payment options with encryption</p>
         </div>
         <div class="feature-card">
-            <div class="feature-icon">🛡️</div>
-            <h3>Money Back Guarantee</h3>
-            <p>30-day satisfaction guarantee on all items</p>
+            <div class="feature-icon">⭐</div>
+            <h3>Best Prices</h3>
+            <p>Price match guarantee on all products</p>
         </div>
     </div>
 </section>

@@ -8,10 +8,11 @@ app.secret_key = "ui-service-secret-key"
 
 # ==================== SERVICE CONFIGURATION ====================
 # Service URLs for inter-service communication
-USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:5001")
-PRODUCT_SERVICE_URL = os.getenv("PRODUCT_SERVICE_URL", "http://localhost:5002")
-CART_SERVICE_URL = os.getenv("CART_SERVICE_URL", "http://localhost:5003")
-PAYMENT_SERVICE_URL = os.getenv("PAYMENT_SERVICE_URL", "http://localhost:5004")
+
+USER_SERVICE_URL = os.getenv("USER_SERVICE_URL") or "http://user-service:5001"
+PRODUCT_SERVICE_URL = os.getenv("PRODUCT_SERVICE_URL") or "http://product-service:5002"
+CART_SERVICE_URL = os.getenv("CART_SERVICE_URL") or "http://cart-service:5003"
+PAYMENT_SERVICE_URL = os.getenv("PAYMENT_SERVICE_URL") or "http://payment-service:5004"
 
 
 # ==================== HELPER FUNCTIONS ====================
