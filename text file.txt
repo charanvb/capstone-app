@@ -1,22 +1,6 @@
-USER_SERVICE_URL = os.getenv("USER_SERVICE_URL") or "http://user-service:5001"
-PRODUCT_SERVICE_URL = os.getenv("PRODUCT_SERVICE_URL") or "http://product-service:5002"
-CART_SERVICE_URL = os.getenv("CART_SERVICE_URL") or "http://cart-service:5003"
-PAYMENT_SERVICE_URL = os.getenv("PAYMENT_SERVICE_URL") or "http://payment-service:5004"
-
-
-
-docker run -d --name ui-service --network microservices-net -p 5000:5000 `
->>   -e USER_SERVICE_URL=http://user-service:5001 `
->>   -e PRODUCT_SERVICE_URL=http://product-service:5002 `
->>   -e CART_SERVICE_URL=http://cart-service:5003 `
->>   -e PAYMENT_SERVICE_URL=http://payment-service:5004 `
->>   ui-service
-
-
-
 steps:
 
-# 🔹 Build Images with UNIQUE TAG
+# 🔹 Build Images
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/user-service:$SHORT_SHA', './microservices/user-service']
 
@@ -33,16 +17,7 @@ steps:
   args: ['build', '-t', 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA', './microservices/ui-service']
 
 
-# 🔹 Push Images
-images:
-- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/user-service:$SHORT_SHA'
-- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/product-service:$SHORT_SHA'
-- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/cart-service:$SHORT_SHA'
-- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA'
-- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA'
-
-
-# 🔹 Deploy to GKE (IMPORTANT PART)
+# 🔹 Deploy Step (must be inside steps)
 - name: 'gcr.io/cloud-builders/kubectl'
   entrypoint: 'bash'
   args:
@@ -53,7 +28,20 @@ images:
       kubectl set image deployment/cart-deployment cart=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/cart-service:$SHORT_SHA
       kubectl set image deployment/payment-deployment payment=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA
       kubectl set image deployment/ui-deployment ui=asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA
-
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=asia-south1'
-    - 'CLOUDSDK_CONTAINER_CLUSTER=YOUR_CLUSTER_NAME'
+    - 'CLOUDSDK_COMPUTE_ZONE=europe-north1-a'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=sahitya-cluster'
+
+
+# 🔹 Push Images (TOP LEVEL ONLY)
+images:
+- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/user-service:$SHORT_SHA'
+- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/product-service:$SHORT_SHA'
+- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/cart-service:$SHORT_SHA'
+- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/payment-service:$SHORT_SHA'
+- 'asia-south1-docker.pkg.dev/citric-kit-489316-g6/sahityaartifactrepo/ui-service:$SHORT_SHA'
+
+
+# 🔹 Options (correct)
+options:
+  logging: CLOUD_LOGGING_ONLY
