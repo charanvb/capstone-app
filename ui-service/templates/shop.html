@@ -1,62 +1,73 @@
 {% extends "base.html" %}
 
-{% block title %}Shop - DigitHub{% endblock %}
+{% block title %}Shop - Charan-EKart{% endblock %}
 
 {% block content %}
 <div class="shop-container">
-    <h1>Explore Our Collection</h1>
-    <p class="shop-subtitle">Discover the latest premium electronics & gadgets</p>
+    <div class="shop-header">
+        <h1>Our Store</h1>
+        <p class="shop-subtitle">Discover 30+ premium tech products at best prices</p>
+    </div>
     
     {% if products %}
         <div class="products-grid">
             {% for product in products %}
                 <div class="product-card">
-                    <div class="product-image">
-                        <div class="image-placeholder">
-                            {% if product.get('category') == 'laptop' %}
-                                💻
-                            {% elif product.get('category') == 'phone' %}
-                                📱
-                            {% elif product.get('category') == 'accessories' %}
-                                🎧
-                            {% else %}
-                                📦
+                    <div class="product-image-wrapper">
+                        <img src="{{ product.get('image', '') }}" alt="{{ product.get('name', 'Product') }}" class="product-image" onerror="this.src='https://via.placeholder.com/400?text=Product+Image'">
+                        <div class="product-badge">
+                            {% if product.get('rating', 0) >= 4.7 %}
+                                <span class="badge-hot">🔥 Hot</span>
+                            {% elif product.get('stock', 0) < 5 %}
+                                <span class="badge-limited">⚡ Limited</span>
                             {% endif %}
                         </div>
                     </div>
                     
                     <div class="product-info">
+                        <div class="product-category-tag">{{ product.get('category', 'Electronics') }}</div>
                         <h3 class="product-name">{{ product.get('name', 'Product') }}</h3>
                         <p class="product-description">{{ product.get('description', 'Great product') }}</p>
                         
-                        <div class="product-details">
-                            <span class="product-category">{{ product.get('category', 'N/A') }}</span>
-                            <span class="product-rating">⭐ {{ product.get('rating', '4.5') }}</span>
+                        <div class="product-rating">
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-value">{{ product.get('rating', '4.5') }}</span>
                         </div>
                         
-                        <div class="product-price">
-                            <span class="price">${{ "%.2f" | format(product.get('price', 0)) }}</span>
-                            <span class="stock {% if product.get('stock', 0) > 0 %}in-stock{% else %}out-stock{% endif %}">
-                                {% if product.get('stock', 0) > 0 %}
-                                    ✓ In Stock
-                                {% else %}
-                                    ✗ Out of Stock
-                                {% endif %}
-                            </span>
+                        <div class="product-price-section">
+                            <span class="price">₹{{ product.get('price', 0) }}</span>
+                            <span class="discount">10% OFF</span>
+                        </div>
+                        
+                        <div class="stock-info {% if product.get('stock', 0) > 0 %}in-stock{% else %}out-stock{% endif %}">
+                            {% if product.get('stock', 0) > 5 %}
+                                <span class="stock-badge">✓ In Stock</span>
+                            {% elif product.get('stock', 0) > 0 %}
+                                <span class="stock-badge limited">⚠ {{ product.get('stock') }} left</span>
+                            {% else %}
+                                <span class="stock-badge out">✗ Out of Stock</span>
+                            {% endif %}
                         </div>
                         
                         <form method="POST" action="{{ url_for('add_to_cart') }}" class="add-to-cart-form">
                             <input type="hidden" name="product_id" value="{{ product.get('id', 0) }}">
                             
                             <div class="quantity-selector">
-                                <label for="quantity-{{ product.get('id') }}">Quantity:</label>
-                                <input type="number" id="quantity-{{ product.get('id') }}" name="quantity" 
-                                       min="1" max="{{ product.get('stock', 1) }}" value="1" required>
+                                <label for="quantity-{{ product.get('id') }}">Qty:</label>
+                                <select id="quantity-{{ product.get('id') }}" name="quantity" class="qty-select">
+                                    {% for i in range(1, min(6, product.get('stock', 1) + 1)) %}
+                                        <option value="{{ i }}">{{ i }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             
-                            <button type="submit" class="btn btn-add-cart" 
+                            <button type="submit" class="btn-add-to-cart" 
                                     {% if product.get('stock', 0) <= 0 %}disabled{% endif %}>
-                                🛒 Add to Cart
+                                {% if product.get('stock', 0) > 0 %}
+                                    🛒 Add to Bag
+                                {% else %}
+                                    Out of Stock
+                                {% endif %}
                             </button>
                         </form>
                     </div>
