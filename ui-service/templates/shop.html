@@ -55,7 +55,8 @@
                             <div class="quantity-selector">
                                 <label for="quantity-{{ product.get('id') }}">Qty:</label>
                                 <select id="quantity-{{ product.get('id') }}" name="quantity" class="qty-select">
-                                    {% for i in range(1, min(6, product.get('stock', 1) + 1)) %}
+                                    {% set max_qty = [5, product.get('stock', 0)] | min %}
+                                    {% for i in range(1, max_qty + 1) %}
                                         <option value="{{ i }}">{{ i }}</option>
                                     {% endfor %}
                                 </select>
