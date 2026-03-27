@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Success - TechStore{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-card">
+        <div class="success-icon">✅</div>
+        <h1>Payment Successful!</h1>
+        <p class="success-message">Thank you for your purchase</p>
+        
+        <div class="order-confirmation">
+            <div class="confirmation-item">
+                <span class="label">Transaction ID:</span>
+                <span class="value">{{ transaction_id }}</span>
+            </div>
+            <div class="confirmation-item">
+                <span class="label">Amount Paid:</span>
+                <span class="value">${{ "%.2f" | format(amount) }}</span>
+            </div>
+            <div class="confirmation-item">
+                <span class="label">Order Status:</span>
+                <span class="value">✓ Confirmed</span>
+            </div>
+            <div class="confirmation-item">
+                <span class="label">Estimated Delivery:</span>
+                <span class="value">3-5 Business Days</span>
+            </div>
+        </div>
+        
+        <div class="confirmation-message">
+            <p>✉️ A confirmation email has been sent to your registered email address.</p>
+            <p>You can track your order from your order history.</p>
+        </div>
+        
+        <div class="success-actions">
+            <a href="{{ url_for('shop') }}" class="btn btn-secondary">Continue Shopping</a>
+            <a href="{{ url_for('order_history') }}" class="btn btn-primary">View Order History</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

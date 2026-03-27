@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Order History - TechStore{% endblock %}
+
+{% block content %}
+<div class="order-history-container">
+    <h1>Order History</h1>
+    <p class="subtitle">View all your previous orders</p>
+    
+    {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <h3>Order ID: {{ order.get('transaction_id', 'N/A') }}</h3>
+                            <p class="order-date">Date: {{ order.get('date', 'N/A') }}</p>
+                        </div>
+                        <div class="order-status">
+                            <span class="status-badge completed">✓ Completed</span>
+                        </div>
+                    </div>
+                    
+                    <div class="order-details">
+                        <div class="detail-row">
+                            <span class="label">Amount:</span>
+                            <span class="value">${{ "%.2f" | format(order.get('amount', 0)) }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Items:</span>
+                            <span class="value">{{ order.get('items_count', 'N/A') }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Payment Method:</span>
+                            <span class="value">{{ order.get('payment_method', 'Credit Card') }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="order-actions">
+                        <button class="btn btn-secondary btn-small" onclick="toggleDetails(this)">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>📦 You haven't placed any orders yet</p>
+            <p>Complete your first purchase to see it here</p>
+            <a href="{{ url_for('shop') }}" class="btn btn-primary">Start Shopping</a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function toggleDetails(button) {
+        const card = button.closest('.order-card');
+        card.classList.toggle('expanded');
+        button.textContent = card.classList.contains('expanded') ? 'Hide Details' : 'View Details';
+    }
+</script>
+{% endblock %}

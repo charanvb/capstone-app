@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-Commerce Store{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <a href="{{ url_for('home') }}" class="logo">🛍️ TechStore</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('home') }}" class="nav-link">Home</a></li>
+                {% if session.get('username') %}
+                    <li><a href="{{ url_for('shop') }}" class="nav-link">Shop</a></li>
+                    <li><a href="{{ url_for('view_cart') }}" class="nav-link">🛒 Cart</a></li>
+                    <li><a href="{{ url_for('order_history') }}" class="nav-link">My Orders</a></li>
+                    <li><a href="{{ url_for('logout') }}" class="nav-link logout-btn">Logout ({{ session.get('username') }})</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}" class="nav-link">Login</a></li>
+                    <li><a href="{{ url_for('register') }}" class="nav-link register-btn">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                    <button class="close-alert" onclick="this.parentElement.style.display='none';">&times;</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 TechStore | Powered by Microservices Architecture</p>
+            <p>Built with Flask &hearts;</p>
+        </div>
+    </footer>
+</body>
+</html>
