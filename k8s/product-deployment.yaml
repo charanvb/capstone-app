@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: product-deployment
+  name: charan-capstone-app-product-deployment
 spec:
   replicas: 1
   selector:
