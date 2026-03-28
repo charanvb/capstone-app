@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ui-to-backend
+spec:
+  podSelector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values: ["product","cart","user","payment"]
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: ui
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-cart-to-payment
+spec:
+  podSelector:
+    matchLabels:
+      app: payment
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: cart
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
