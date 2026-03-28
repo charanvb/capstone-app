@@ -8,41 +8,6 @@ spec:
   rules:
   - http:
       paths:
-      # ========== BACKEND API ROUTES ==========
-      # These routes showcase path-based routing to microservices
-      
-      - path: /api/products
-        pathType: Prefix
-        backend: 
-          service:
-            name: product-service
-            port:
-              number: 5002
-
-      - path: /api/cart
-        pathType: Prefix
-        backend: 
-          service:
-            name: cart-service
-            port:
-              number: 5003
-
-      - path: /api/payment
-        pathType: Prefix
-        backend: 
-          service:
-            name: payment-service
-            port:
-              number: 5004
-
-      - path: /api/user
-        pathType: Prefix
-        backend: 
-          service:
-            name: user-service
-            port:
-              number: 5001
-
       # ========== UI ROUTES ==========
       # Catch-all route for frontend application
       - path: /
