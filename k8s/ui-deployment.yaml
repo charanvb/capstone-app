@@ -39,12 +39,12 @@ kind: Service
 metadata:
   name: ui-service
 spec:
+  type: NodePort
   selector:
     app: ui
   ports:
     - port: 80
       targetPort: 5000
-  type: ClusterIP
 
 
 --- 
@@ -67,3 +67,5 @@ spec:
       target:
         type: Utilization
         averageUtilization: 80
+
+
