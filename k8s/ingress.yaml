@@ -6,15 +6,8 @@ spec:
   rules:
   - http:
       paths:
-      - path: /
-        pathType: Prefix
-        backend: 
-          service:
-            name: ui-service
-            port:
-              number: 80
 
-      - path: /products
+      - path: /product
         pathType: Prefix
         backend: 
           service:
@@ -46,3 +39,10 @@ spec:
             port:
               number: 5001
         
+      - path: /
+        pathType: Prefix
+        backend: 
+          service:
+            name: ui-service
+            port:
+              number: 80

@@ -22,7 +22,7 @@ spec:
             requests:
               cpu: "100m"
             limits:
-              cpu: "300m"
+              cpu: "400m"
 
         env:
         - name: USER_SERVICE_URL
@@ -59,11 +59,11 @@ spec:
     kind: Deployment
     name: charan-capstone-app-ui-deployment
   minReplicas: 1
-  maxReplicas: 5
+  maxReplicas: 3
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 60
+        averageUtilization: 80
