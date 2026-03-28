@@ -1,1 +1,1 @@
-this is a test text
+gcloud container node-pools create default-pool2 --cluster charan-gke-01 --machine-type e2-standard-4 --num-nodes 2 --zone us-west1-b
