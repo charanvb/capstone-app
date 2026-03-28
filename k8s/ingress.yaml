@@ -13,4 +13,36 @@ spec:
             name: ui-service
             port:
               number: 80
+
+      - path: /products
+        pathType: Prefix
+        backend: 
+          service:
+            name: product-service
+            port:
+              number: 5002
+
+      - path: /cart
+        pathType: Prefix
+        backend: 
+          service:
+            name: cart-service
+            port:
+              number: 5003
+
+      - path: /payment
+        pathType: Prefix
+        backend: 
+          service:
+            name: payment-service
+            port:
+              number: 5004
+
+      - path: /user
+        pathType: Prefix
+        backend: 
+          service:
+            name: user-service
+            port:
+              number: 5001
         
