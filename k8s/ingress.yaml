@@ -8,10 +8,10 @@ metadata:
 
 spec:
   rules:
-  - http:
+  - host: charan-vb.me
+    http:
       paths:
-      # ========== UI ROUTES ==========
-      # Catch-all route for frontend application
+
       - path: /
         pathType: Prefix
         backend: 
