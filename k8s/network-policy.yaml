@@ -12,13 +12,28 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
+  name: allow-external-to-ui
+spec:
+  podSelector:
+    matchLabels:
+      app: ui
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
   name: allow-ui-to-backend
 spec:
   podSelector:
     matchExpressions:
     - key: app
       operator: In
-      values: ["product","cart","user","payment"]
+      values: ["user","product","cart","payment"]
   ingress:
   - from:
     - podSelector:
@@ -30,29 +45,63 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-cart-to-payment
+  name: allow-payment-to-cart
 spec:
   podSelector:
     matchLabels:
-      app: payment
+      app: cart
   ingress:
   - from:
     - podSelector:
         matchLabels:
-          app: cart
-
+          app: payment
 
 ---
 
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-external-to-ui
+  name: allow-cart-to-product
 spec:
   podSelector:
     matchLabels:
-      app: ui
+      app: product
   ingress:
   - from:
-    - ipBlock:
-        cidr: 0.0.0.0/0
+    - podSelector:
+        matchLabels:
+          app: cart
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-cart-to-user
+spec:
+  podSelector:
+    matchLabels:
+      app: user
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: cart
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
+
