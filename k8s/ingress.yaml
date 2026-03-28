@@ -2,12 +2,16 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - http:
       paths:
-
-      - path: /shop
+      # ========== BACKEND API ROUTES ==========
+      # These routes showcase path-based routing to microservices
+      
+      - path: /api/products
         pathType: Prefix
         backend: 
           service:
@@ -15,7 +19,7 @@ spec:
             port:
               number: 5002
 
-      - path: /cart
+      - path: /api/cart
         pathType: Prefix
         backend: 
           service:
@@ -23,7 +27,7 @@ spec:
             port:
               number: 5003
 
-      - path: /payment
+      - path: /api/payment
         pathType: Prefix
         backend: 
           service:
@@ -31,14 +35,16 @@ spec:
             port:
               number: 5004
 
-      - path: /user
+      - path: /api/user
         pathType: Prefix
         backend: 
           service:
             name: user-service
             port:
               number: 5001
-        
+
+      # ========== UI ROUTES ==========
+      # Catch-all route for frontend application
       - path: /
         pathType: Prefix
         backend: 
