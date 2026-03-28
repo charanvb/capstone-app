@@ -3,7 +3,9 @@ kind: Ingress
 metadata:
   name: app-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    networking.gke.io/managed-certificates: app-cert
+
+
 spec:
   rules:
   - http:
