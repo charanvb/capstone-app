@@ -24,6 +24,24 @@ spec:
             limits:
               cpu: "300m"
 
+        # LIVENESS PROBE
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 3
+
+        # READINESS PROBE
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3
+
         env:
         - name: USER_SERVICE_URL
           value: "http://user-service:5001"
