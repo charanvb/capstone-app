@@ -4,5 +4,4 @@ metadata:
   name: app-cert
 spec:
   domains:
-    - charan-vb.me
-    - www.charan-vb.me
+    - capstone-app.charan-vb.me
