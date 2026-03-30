@@ -8,7 +8,7 @@ metadata:
 
 spec:
   rules:
-  - host: charan-vb.me
+  - host: capstone-app.charan-vb.me
     http:
       paths:
 

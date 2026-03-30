@@ -1,14 +1,15 @@
+# 🔹 1. Default deny all ingress
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: default-deny
+  name: default-deny-ingress
 spec:
   podSelector: {}
   policyTypes:
   - Ingress
 
 ---
-
+# 🔹 2. Allow external traffic → UI
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -17,13 +18,15 @@ spec:
   podSelector:
     matchLabels:
       app: ui
+  policyTypes:
+  - Ingress
   ingress:
   - from:
     - ipBlock:
         cidr: 0.0.0.0/0
 
 ---
-
+# 🔹 3. Allow UI → all backend services
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -34,6 +37,8 @@ spec:
     - key: app
       operator: In
       values: ["user","product","cart","payment"]
+  policyTypes:
+  - Ingress
   ingress:
   - from:
     - podSelector:
@@ -41,7 +46,27 @@ spec:
           app: ui
 
 ---
+# 🔹 4. Allow cart → user + product
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-cart-to-services
+spec:
+  podSelector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values: ["user","product"]
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: cart
 
+---
+# 🔹 5. Allow payment → cart
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -50,58 +75,10 @@ spec:
   podSelector:
     matchLabels:
       app: cart
+  policyTypes:
+  - Ingress
   ingress:
   - from:
     - podSelector:
         matchLabels:
           app: payment
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-cart-to-product
-spec:
-  podSelector:
-    matchLabels:
-      app: product
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: cart
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-cart-to-user
-spec:
-  podSelector:
-    matchLabels:
-      app: user
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: cart
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-dns
-spec:
-  podSelector: {}
-  policyTypes:
-  - Egress
-  egress:
-  - to:
-    - namespaceSelector: {}
-    ports:
-    - protocol: UDP
-      port: 53
-
